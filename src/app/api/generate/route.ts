@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { runChapterPipeline, PIPELINE_VERSION } from '@/lib/story-pipeline';
 
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -227,16 +226,6 @@ export async function POST(request: NextRequest) {
           maxTokens: Math.min(4000, Math.max(800, Math.floor((data.wordTarget || 1000) * 1.5))),
         });
         return NextResponse.json({ success: true, content });
-      }
-
-      case 'chapter-pipeline': {
-        const pipeline = await runChapterPipeline(
-          (messages, options) => createTextCompletion(messages, options),
-          data,
-          MODEL
-        );
-
-        return NextResponse.json({ success: true, pipeline, promptVersion: PIPELINE_VERSION });
       }
 
       case 'character': {
